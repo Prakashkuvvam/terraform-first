@@ -11,11 +11,26 @@ resource "aws_instance" "myec2" {
     type        = "ssh"
     user        = "ubuntu"
     host        = self.public_ip
-    private_key = file("./prakash.pem")
+    private_key = file("${aws_key_pair.mykp.key_name}.pem")
   }
-  provisioner "remote-exec" {
-    script = "jenkins.sh"
-  }
-  depends_on = [local_file.mypem, tls_private_key.myrsa]
+  # user_data = file("${path.module}/userdata.sh")
 
+  #   provisioner "file" {
+  #     source      = "./docker.sh"
+  #     destination = "/tmp/"
+  #   }
+  #  provisioner "file" {
+  #     source      = "./jenkins.sh"
+  #     destination = "/tmp/"
+  #   }
+
+  provisioner "remote-exec" {
+    script = "./userdata.sh"
+  }
+  
+  depends_on = [local_file.mypem, tls_private_key.myrsa, aws_key_pair.mykp]
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }

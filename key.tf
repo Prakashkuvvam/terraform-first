@@ -1,5 +1,5 @@
 resource "aws_key_pair" "mykp" {
-  key_name   = "laptop"
+  key_name   = "prakash"
   public_key = tls_private_key.myrsa.public_key_openssh
   tags = {
     Name = "Prakash"
